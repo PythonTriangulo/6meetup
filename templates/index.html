@@ -1,0 +1,290 @@
+<style>
+#slidecontainer {
+    width: 80%;
+    margin-top: 130px;
+    margin-bottom: 100px;
+    margin-right: 120px;
+    margin-left: 60px;
+    
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 80%;
+    height: 15px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+</style>
+
+
+
+<html> 	  
+	  <div style="float: left; width: 50%;">
+		  <head>
+	    <title>SolveCam</title>
+	  </head>
+	  <body>
+	    <h2 ALIGN="center">SolveCam</h2>
+
+	    <div style="position: absolute;">
+ 		<canvas id="canvas2" width="640" height="480"
+   		style="position: absolute; left: 0; top: 0; z-index: 2;"></canvas>
+
+   		<canvas id="canvas1" width="640" height="480"
+   		style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+ 		
+ 		<canvas id="canvas" width="640" height="480" 
+   		style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
+   		<img id="bg" src="{{ url_for('video_feed') }}"></img>
+
+		</div>
+		</body>
+		</div>
+	    
+		<script>
+
+
+	    var canvas2=document.getElementById("canvas2");
+	    var ctx2=canvas2.getContext("2d");
+	    rect2 = {};
+	    var canvas1=document.getElementById("canvas1");
+	    var ctx1=canvas1.getContext("2d");
+	    rect1 = {};
+	    
+	    	    
+	    dragred = true;
+	    dragreen = false;
+	    flag = true;	
+	
+		function init() {
+		  canvas2.addEventListener('mousedown', mouseDown, false);
+		  canvas2.addEventListener('mouseup', mouseUp, false);
+		  canvas2.addEventListener('mousemove', mouseMove, false);
+		  canvas1.addEventListener('mousedown', mouseDown, false);
+		  canvas1.addEventListener('mouseup', mouseUp, false);
+		  canvas1.addEventListener('mousemove', mouseMove, false);
+
+		}
+
+		function mouseDown(e) {
+
+		  if (dragred){
+		  	rect2.startX = e.pageX - this.offsetLeft;
+		  	rect2.startY = e.pageY - this.offsetTop;
+		  	flag = true;	  	
+		  }
+		  if (dragreen) {
+		  	rect1.startX = e.pageX - this.offsetLeft;
+		  	rect1.startY = e.pageY - this.offsetTop;		  	
+		  }
+		  
+		}
+
+		function mouseUp() {
+			if (flag) {
+				dragred = false;
+				dragreen = true;
+			}
+			else{
+				dragreen = false
+			}
+		}
+		function mouseMove(e) {
+		  if (dragred) {
+		    rect2.w = (e.pageX - this.offsetLeft) - rect2.startX;
+		    rect2.h = (e.pageY - this.offsetTop) - rect2.startY ;
+		    ctx2.clearRect(0,0,canvas2.width,canvas2.height);
+		    draw2();
+		  }
+		   if (dragreen) {
+		    rect1.w = (e.pageX - this.offsetLeft) - rect1.startX;
+		    rect1.h = (e.pageY - this.offsetTop) - rect1.startY ;
+		    ctx1.clearRect(0,0,canvas1.width,canvas1.height);
+		    draw();
+		  }
+		}
+
+		function draw2() {
+		 
+		  ctx2.setLineDash([]);
+		  ctx2.lineWidth=5;
+		  ctx2.strokeStyle="red";
+		  ctx2.strokeRect(rect2.startX-10, rect2.startY-90, rect2.w, rect2.h);
+
+		}
+		function draw() {
+		 
+		  ctx1.setLineDash([]);
+		  ctx1.lineWidth=5;
+		  ctx1.strokeStyle="green";
+		  ctx1.strokeRect(rect1.startX-10, rect1.startY-90, rect1.w, rect1.h);
+		  flag = false;
+
+
+		}
+
+		init();
+
+		</script>
+		</body>
+		</div>
+	<div style="float: right; width: 45%; height: 10%;">
+		
+		<body>
+		<div id="slidecontainer">
+		<h2>Limiar superior</h2>
+		  <input type="range" min="1" max="2000" value="0" class="slider" id="myRange">
+		  <p>Value: <span id="demo"></span></p>
+		</div>
+
+
+		<script>
+		var slider = document.getElementById("myRange");
+		var output = document.getElementById("demo");
+		output.innerHTML = slider.value;
+
+		slider.oninput = function() {
+		  output.innerHTML = this.value;
+		}
+		</script>
+
+		<div id="slidecontainer">
+		<h2>Limiar inferior</h2>		
+		  <input type="range" name="myRange2" min="1" max="2000" value="0" class="slider" id="myRange2">
+		  <p>Value: <span id="demo2"></span></p>
+		  <button type="button" onclick="post([rect1.startX, rect1.startY, rect1.w, rect1.h, rect2.startX, rect2.startY, rect2.w, rect2.h, output.innerHTML, output2.innerHTML])">Ok</button>			
+			<body>
+			<div style="float: right; width: 40% ;height: 10%;">
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+			
+			<h4>Iniciar OP</h4>
+			<button type="button" onclick="opstart([0])">
+			<i class="fa fa-play" style="font-size:48px;color:black"></i>
+			<br>
+			</button>
+			</div>			
+			<div style="float: right; width: 40% ;height: 10%;">
+			<h4>Parar OP</h4>
+			<button type="button" onclick="opfinish([1])">
+			<i class="fa fa-stop" style="font-size:48px;color:black"></i>
+			<br>
+			</button>
+			</div>	
+			</body>
+			</div>		
+	</div>			
+		
+		<script>
+		function opstart(parameter){
+
+			var data = JSON.stringify(parameter);
+			var xhr = new XMLHttpRequest();
+			//xhr.withCredentials = true;
+
+			xhr.addEventListener("readystatechange", function () {
+			  if (this.readyState === 4) {
+			    console.log(this.responseText);
+			  }
+			});
+
+			xhr.open("POST", "http://bandeirante:5000/start", true);
+			xhr.setRequestHeader("content-type", "application/json");
+			//xhr.setRequestHeader("cache-control", "no-cache");
+			//xhr.setRequestHeader("postman-token", "f8277732-fa40-5fbb-07aa-3a8c63b285db");
+			xhr.send(data);
+		}
+		function opfinish(parameter){			
+		
+						
+			var data = JSON.stringify(parameter);
+			var xhr = new XMLHttpRequest();
+			//xhr.withCredentials = true;
+
+			xhr.addEventListener("readystatechange", function () {
+			  if (this.readyState === 4) {
+			    console.log(this.responseText);
+			  }
+			});
+
+			xhr.open("POST", "http://bandeirante:5000/stop", true);
+			xhr.setRequestHeader("content-type", "application/json");
+			//xhr.setRequestHeader("cache-control", "no-cache");
+			//xhr.setRequestHeader("postman-token", "f8277732-fa40-5fbb-07aa-3a8c63b285db");
+
+			xhr.send(data);
+		}
+		</script>
+
+		<script>
+		var slider2 = document.getElementById("myRange2");
+		var output2 = document.getElementById("demo2");
+		output2.innerHTML = slider2.value;
+
+		slider2.oninput = function() {
+		  output2.innerHTML = this.value;
+		}
+
+		</script>
+		<script>
+
+		
+		function post(parameter){			
+		
+						
+			var data = JSON.stringify(parameter);
+			var xhr = new XMLHttpRequest();
+			//xhr.withCredentials = true;
+
+			xhr.addEventListener("readystatechange", function () {
+			  if (this.readyState === 4) {
+			    console.log(this.responseText);
+			  }
+			});
+
+			xhr.open("POST", "http://bandeirante:5000/post", true);
+			xhr.setRequestHeader("content-type", "application/json");
+			//xhr.setRequestHeader("cache-control", "no-cache");
+			//xhr.setRequestHeader("postman-token", "f8277732-fa40-5fbb-07aa-3a8c63b285db");
+
+			xhr.send(data);
+		}
+
+		
+		
+		</script>	
+
+		</body>
+  	</div>
+
+</html>
