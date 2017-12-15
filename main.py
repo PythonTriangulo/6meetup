@@ -41,7 +41,7 @@ def read(diretory):
     l = lines[2].split(',')
     __canny_upper = float(l[0])
     __canny_lower = float(l[1])
-    
+
 
     return __roi_x, __roi_y, __roi_x_template, __roi_y_template, __canny_upper, __canny_lower
 
@@ -67,23 +67,22 @@ def video_feed():
     global video_camera
     video_camera = VideoCamera()
     return Response(gen(video_camera),mimetype='multipart/x-mixed-replace; boundary=frame')
-    
- 
+
 
 @app.route('/post', methods=['POST'])
 def post_route():
 
     if request.method == 'POST':
-        data = request.get_json(force=True)    
+        data = request.get_json(force=True)
         text_file= open("operator_params.txt", "w")
         text_file.write("%s,%s,%s,%s\n" %(data[0], data[1], data[2], data[3]))
-        text_file.write("%s,%s,%s,%s\n" %(data[4], data[5], data[6], data[7]))  
-        text_file.write("%s,%s\n" %(data[8], data[9]))        
+        text_file.write("%s,%s,%s,%s\n" %(data[4], data[5], data[6], data[7]))
+        text_file.write("%s,%s\n" %(data[8], data[9]))
         text_file.close()
         time.sleep(1)
         print('Data Received: "{data}"'.format(data=data))
         return "Request Processed.\n"
-        
+
 @app.route('/start', methods=['POST'])
 def post_start():
     global flag
@@ -91,8 +90,8 @@ def post_start():
     if request.method == 'POST':
         print("fiz")
         flag = False
-        data = request.get_json(force=True)        
-        os.system("sudo rm ../data/images/*")   
+        data = request.get_json(force=True)
+        os.system("sudo rm ../data/images/*")
         video_camera.__del__()
         os.system("bin/solvecam &")
         print('Data Received: "{data}"'.format(data=data))
@@ -104,7 +103,7 @@ def post_stop():
     global video_camera
     global flag
     if request.method == 'POST':
-        data = request.get_json(force=True)    
+        data = request.get_json(force=True)
         myname = "solvecam"
         mypid = getpid()
         for process in psutil.process_iter():
@@ -130,7 +129,7 @@ def post_stop():
                         print "process found"
                         process.terminate()
         flag = True
-        gen(video_camera)        
+        gen(video_camera)
         print('Data Received: "{data}"'.format(data=data))
         return "Request Processed.\n"
 
