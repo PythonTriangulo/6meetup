@@ -104,30 +104,15 @@ def post_stop():
     global flag
     if request.method == 'POST':
         data = request.get_json(force=True)
-        myname = "solvecam"
+        mynames = ["solvecam", "central", "tracker"]
         mypid = getpid()
         for process in psutil.process_iter():
             if process.pid != mypid:
                 for path in process.cmdline():
-                    if myname in path:
-                        print "process found"
-                        process.terminate()
-        myname = "central"
-        mypid = getpid()
-        for process in psutil.process_iter():
-            if process.pid != mypid:
-                for path in process.cmdline():
-                    if myname in path:
-                        print "process found"
-                        process.terminate()
-        myname = "tracker"
-        mypid = getpid()
-        for process in psutil.process_iter():
-            if process.pid != mypid:
-                for path in process.cmdline():
-                    if myname in path:
-                        print "process found"
-                        process.terminate()
+                    for myname in mynames:
+                        if myname in path:
+                            print "process found"
+                            process.terminate()
         flag = True
         gen(video_camera)
         print('Data Received: "{data}"'.format(data=data))
